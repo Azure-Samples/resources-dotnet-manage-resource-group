@@ -6,12 +6,12 @@ author: alvadb
 
 #Getting Started with Resources - Manage Resource Group - in .Net #
 
-      Azure Resource sample for managing resource groups -
-      - Create a resource group
-      - Update a resource group
-      - Create another resource group
-      - List resource groups
-      - Delete a resource group.
+          Azure Resource sample for managing resource groups -
+          - Create a resource group
+          - Update a resource group
+          - Create another resource group
+          - List resource groups
+          - Delete a resource group.
 
 
 ## Running this Sample ##
