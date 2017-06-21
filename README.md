@@ -4,7 +4,7 @@ platforms: .Net
 author: alvadb
 ---
 
-#Getting Started with Resources - Manage Resource Group - in .Net #
+# Getting Started with Resources - Manage Resource Group - in .Net #
 
           Azure Resource sample for managing resource groups -
           - Create a resource group
