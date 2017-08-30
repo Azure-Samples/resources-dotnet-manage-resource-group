@@ -1,0 +1,4 @@
+C:\Sources\dotnet-samples\resources-dotnet-manage-resource-group\bin\Debug\net452\ManageResourceGroup.runtimeconfig.json
+C:\Sources\dotnet-samples\resources-dotnet-manage-resource-group\bin\Debug\net452\ManageResourceGroup.runtimeconfig.dev.json
+C:\Sources\dotnet-samples\resources-dotnet-manage-resource-group\obj\Debug\net452\ManageResourceGroup.csproj.ManageResourceGroup.exe.config
+C:\Sources\dotnet-samples\resources-dotnet-manage-resource-group\obj\Debug\net452\ManageResourceGroup.csproj.CoreCompileInputs.cache
