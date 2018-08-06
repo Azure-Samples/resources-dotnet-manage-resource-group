@@ -1,10 +1,10 @@
 ---
-services: Resources
-platforms: .Net
+services: Resource-Manager
+platforms: dotnet
 author: alvadb
 ---
 
-# Getting Started with Resources - Manage Resource Group - in .Net #
+# Getting started on managing resource groups in C# #
 
           Azure Resource sample for managing resource groups -
           - Create a resource group
@@ -18,7 +18,7 @@ author: alvadb
 
 To run this sample:
 
-Set the environment variable `AZURE_AUTH_LOCATION` with the full path for an auth file. See [how to create an auth file](https://github.com/Azure/azure-sdk-for-net/blob/Fluent/AUTH.md).
+Set the environment variable `AZURE_AUTH_LOCATION` with the full path for an auth file. See [how to create an auth file](https://github.com/Azure/azure-libraries-for-java/blob/master/AUTH.md).
 
     git clone https://github.com/Azure-Samples/resources-dotnet-manage-resource-group.git
 
