@@ -23,10 +23,10 @@ Set the environment variable `AZURE_AUTH_LOCATION` with the full path for an aut
     git clone https://github.com/Azure-Samples/resources-dotnet-manage-resource-group.git
 
     cd resources-dotnet-manage-resource-group
-
-    dotnet restore
-
-    dotnet run
+  
+    dotnet build
+    
+    bin\Debug\net452\ManageResourceGroup.exe
 
 ## More information ##
 
