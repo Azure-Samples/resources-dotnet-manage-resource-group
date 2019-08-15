@@ -4,19 +4,19 @@ languages:
 - csharp
 products:
 - azure
-services: Resource-Manager
-platforms: dotnet
-author: yaohaizh
+extensions:
+- services: Resource-Manager
+- platforms: dotnet
 ---
 
 # Getting started on managing resource groups in C# #
 
-          Azure Resource sample for managing resource groups -
-          - Create a resource group
-          - Update a resource group
-          - Create another resource group
-          - List resource groups
-          - Delete a resource group.
+ Azure Resource sample for managing resource groups -
+ - Create a resource group
+ - Update a resource group
+ - Create another resource group
+ - List resource groups
+ - Delete a resource group.
 
 
 ## Running this Sample ##
