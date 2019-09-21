@@ -7,6 +7,7 @@ products:
 extensions:
 - services: Resource-Manager
 - platforms: dotnet
+description: "Azure Resource sample for managing resource groups."
 ---
 
 # Getting started on managing resource groups in C# #
