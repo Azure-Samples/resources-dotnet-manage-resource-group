@@ -1,17 +1,17 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Azure.Management.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using Microsoft.Azure.Management.Samples.Common;
-using System;
+using Azure;
+using Azure.Core;
+using Azure.Identity;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Resources;
 
 namespace ManageResourceGroup
 {
     public class Program
     {
+        private static ResourceIdentifier? _resourceGroupId = null;
         /**
          * Azure Resource sample for managing resource groups -
          * - Create a resource group
@@ -20,103 +20,101 @@ namespace ManageResourceGroup
          * - List resource groups
          * - Delete a resource group.
          */
-        public static void RunSample(IAzure azure)
+        public static async Task RunSample(ArmClient client)
         {
-            var rgName = SdkContext.RandomResourceName("rgRSMA", 24);
-            var rgName2 = SdkContext.RandomResourceName("rgRSMA", 24);
-            var resourceTagName = SdkContext.RandomResourceName("rgRSTN", 24);
-            var resourceTagValue = SdkContext.RandomResourceName("rgRSTV", 24);
+            // change the value here for your own
+            var rgName = "rgRSMA";
+            var rgName2 = "rgRSMA";
+            var resourceTagName = "rgRSTN";
+            var resourceTagValue = "rgRSTV";
             
             try
             {
                 //=============================================================
                 // Create resource group.
 
-                Utilities.Log("Creating a resource group with name: " + rgName);
+                Console.WriteLine($"Creating a resource group with name: {rgName}");
 
-                var resourceGroup = azure.ResourceGroups
-                        .Define(rgName)
-                        .WithRegion(Region.USWest)
-                        .Create();
+                var subscription = await client.GetDefaultSubscriptionAsync();
+                var rgLro = await subscription.GetResourceGroups().CreateOrUpdateAsync(WaitUntil.Completed, rgName, new ResourceGroupData(AzureLocation.WestUS));
+                var resourceGroup = rgLro.Value;
+                _resourceGroupId = resourceGroup.Id;
 
-                Utilities.Log("Created a resource group with name: " + rgName);
+                Console.WriteLine($"Created a resource group with name: {resourceGroup.Id}");
 
                 //=============================================================
                 // Update the resource group.
 
-                Utilities.Log("Updating the resource group with name: " + rgName);
+                Console.WriteLine($"Updating the resource group: {resourceGroup.Id}");
 
-                resourceGroup.Update()
-                    .WithTag(resourceTagName, resourceTagValue)
-                    .Apply();
+                resourceGroup = await resourceGroup.AddTagAsync(resourceTagName, resourceTagValue);
 
-                Utilities.Log("Updated the resource group with name: " + rgName);
+                Console.WriteLine($"Updated the resource group: {resourceGroup.Id}");
 
                 //=============================================================
                 // Create another resource group.
 
-                Utilities.Log("Creating another resource group with name: " + rgName2);
+                Console.WriteLine($"Creating another resource group with name: {rgName2}");
 
-                var resourceGroup2 = azure.ResourceGroups
-                    .Define(rgName2)
-                    .WithRegion(Region.USWest)
-                    .Create();
+                rgLro = await subscription.GetResourceGroups().CreateOrUpdateAsync(WaitUntil.Completed, rgName2, new ResourceGroupData(AzureLocation.WestUS));
+                var resourceGroup2 = rgLro.Value;
 
-                Utilities.Log("Created another resource group with name: " + rgName2);
+                Console.WriteLine($"Created another resource group: {resourceGroup2.Id}");
 
                 //=============================================================
                 // List resource groups.
 
-                Utilities.Log("Listing all resource groups");
+                Console.WriteLine("Listing all resource groups");
 
-                foreach (var rGroup in azure.ResourceGroups.List())
+                foreach (var rGroup in subscription.GetResourceGroups())
                 {
-                    Utilities.Log("Resource group: " + rGroup.Name);
+                    Console.WriteLine($"Resource group: {rGroup.Id}");
                 }
 
                 //=============================================================
                 // Delete a resource group.
 
-                Utilities.Log("Deleting resource group: " + rgName2);
+                Console.WriteLine($"Deleting resource group: {resourceGroup2.Id}");
 
-                azure.ResourceGroups.DeleteByName(rgName2);
+                await resourceGroup2.DeleteAsync(WaitUntil.Completed);
 
-                Utilities.Log("Deleted resource group: " + rgName2);
+                Console.WriteLine($"Deleted resource group: {resourceGroup2.Id}");
             }
             finally
             {
                 try
                 {
-                    Utilities.Log("Deleting Resource Group: " + rgName);
-                    azure.ResourceGroups.DeleteByName(rgName);
-                    Utilities.Log("Deleted Resource Group: " + rgName);
+                    if (_resourceGroupId is not null)
+                    {
+                        Console.WriteLine($"Deleting Resource Group: {_resourceGroupId}");
+                        await client.GetResourceGroupResource(_resourceGroupId).DeleteAsync(WaitUntil.Completed);
+                        Console.WriteLine($"Deleted Resource Group: {_resourceGroupId}");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Utilities.Log(ex);
+                    Console.WriteLine(ex);
                 }
             }
         }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             try
             {
                 //=================================================================
                 // Authenticate
-                AzureCredentials credentials = SdkContext.AzureCredentialsFactory.FromFile(Environment.GetEnvironmentVariable("AZURE_AUTH_LOCATION"));
+                var credential = new DefaultAzureCredential();
 
-                var azure = Azure
-                    .Configure()
-                    .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
-                    .Authenticate(credentials)
-                    .WithDefaultSubscription();
+                var subscriptionId = Environment.GetEnvironmentVariable("AZURE_SUBSCRIPTION_ID");
+                // you can also use `new ArmClient(credential)` here, and the default subscription will be the first subscription in your list of subscription
+                var client = new ArmClient(credential, subscriptionId);
 
-                RunSample(azure);
+                await RunSample(client);
             }
             catch (Exception ex)
             {
-                Utilities.Log(ex);
+                Console.WriteLine(ex);
             }
         }
     }
